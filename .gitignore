@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+configs/api_keys.yaml
+configs/api_keys.*.yaml
+!configs/api_keys.example.yaml
+
+# Raw model outputs and traces
+results/
+outputs/
+logs/
+tmp/
+llm_traces/
+*.llm_trace.jsonl
+
+# Paper/build artifacts are kept out of the code release
+paper/
+*.pdf
+*.png
+*.drawio
+*.docx
+*.typ
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Large local data files
+*.jsonl
+Big5.tok.jsonl
+src/Big5.tok.pkl
+datasets/
+RoleBench/
+full_character/

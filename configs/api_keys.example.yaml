@@ -1,0 +1,352 @@
+# =============================================================================
+# LLM API Configuration
+# =============================================================================
+# Copy this file to `api_keys.yaml` and fill in your real keys.
+# `api_keys.yaml` is gitignored so your secrets stay local.
+#
+# Structure:
+#   providers:
+#     <provider_name>:
+#       type: openai_compat | anthropic | google
+#       base_url: <api endpoint, required for openai_compat>
+#       keys:
+#         - id: <unique key id used in logs>
+#           key: <the actual API key>
+#           rpm: <requests per minute limit, 0 = unlimited>
+#           tpm: <tokens per minute limit, 0 = unlimited>
+#           concurrency: <max in-flight requests for this key, default 4>
+#           enabled: true
+#       models:                          # optional - declared model names + price
+#         <model_id>:
+#           input_per_1m: <USD per 1M input tokens>
+#           output_per_1m: <USD per 1M output tokens>
+#
+# Routing:
+#   models:                              # maps a model alias -> provider:model_id
+#     gpt-4o: openai:gpt-4o
+#     claude-sonnet-4: anthropic:claude-sonnet-4-20250514
+#     ...
+# =============================================================================
+
+providers:
+
+  # ----- OpenAI -----
+  # Only NON-reasoning chat-capable models are listed. Reasoning models
+  # (o-series and bare gpt-5/5.1/5.2/... without -chat-latest suffix) pin
+  # temperature server-side, which violates our experiment policy.
+  openai:
+    type: openai_compat
+    base_url: https://api.openai.com/v1
+    keys:
+      - id: openai-1
+        key: sk-REPLACE_ME
+        rpm: 5000
+        tpm: 800000
+        concurrency: 8
+        enabled: true
+    models:
+      # GPT-4o family
+      gpt-4o:
+        input_per_1m: 2.50
+        output_per_1m: 10.00
+      gpt-4o-mini:
+        input_per_1m: 0.15
+        output_per_1m: 0.60
+      # GPT-4.1 family
+      gpt-4.1:
+        input_per_1m: 2.00
+        output_per_1m: 8.00
+      gpt-4.1-mini:
+        input_per_1m: 0.40
+        output_per_1m: 1.60
+      gpt-4.1-nano:
+        input_per_1m: 0.10
+        output_per_1m: 0.40
+      # GPT-5.x chat-latest (explicit non-reasoning routes)
+      gpt-5-chat-latest:
+        input_per_1m: 1.25
+        output_per_1m: 10.00
+      gpt-5.1-chat-latest:
+        input_per_1m: 1.50
+        output_per_1m: 12.00
+      gpt-5.2-chat-latest:
+        input_per_1m: 1.75
+        output_per_1m: 14.00
+      gpt-5.3-chat-latest:
+        input_per_1m: 2.00
+        output_per_1m: 16.00
+
+  # ----- Anthropic -----
+  anthropic:
+    type: anthropic
+    keys:
+      - id: anthropic-1
+        key: sk-ant-REPLACE_ME
+        rpm: 4000
+        tpm: 400000
+        concurrency: 8
+        enabled: true
+    models:
+      claude-sonnet-4-20250514:
+        input_per_1m: 3.00
+        output_per_1m: 15.00
+      claude-opus-4-20250514:
+        input_per_1m: 15.00
+        output_per_1m: 75.00
+      claude-3-5-haiku-20241022:
+        input_per_1m: 0.80
+        output_per_1m: 4.00
+
+  # ----- Google Gemini -----
+  google:
+    type: google
+    keys:
+      - id: google-1
+        key: REPLACE_ME
+        rpm: 1000
+        tpm: 4000000
+        concurrency: 8
+        enabled: true
+    models:
+      gemini-2.5-pro:
+        input_per_1m: 1.25
+        output_per_1m: 10.00
+      gemini-2.5-flash:
+        input_per_1m: 0.30
+        output_per_1m: 2.50
+
+  # ----- DeepSeek -----
+  deepseek:
+    type: openai_compat
+    base_url: https://api.deepseek.com/v1
+    keys:
+      - id: deepseek-1
+        key: sk-REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 16
+        enabled: true
+    models:
+      deepseek-chat:
+        input_per_1m: 0.27
+        output_per_1m: 1.10
+      deepseek-reasoner:
+        input_per_1m: 0.55
+        output_per_1m: 2.19
+
+  # ----- Qwen (Aliyun DashScope, OpenAI-compatible mode) -----
+  qwen:
+    type: openai_compat
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    keys:
+      - id: qwen-1
+        key: sk-REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 8
+        enabled: true
+    models:
+      qwen3-235b-a22b:
+        input_per_1m: 0.40
+        output_per_1m: 1.20
+      qwen-max:
+        input_per_1m: 1.60
+        output_per_1m: 6.40
+      qwen-plus:
+        input_per_1m: 0.40
+        output_per_1m: 1.20
+
+  # ----- Zhipu GLM -----
+  glm:
+    type: openai_compat
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    keys:
+      - id: glm-1
+        key: REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 8
+        enabled: true
+    models:
+      glm-4.5:
+        input_per_1m: 0.50
+        output_per_1m: 2.00
+      glm-4-plus:
+        input_per_1m: 5.00
+        output_per_1m: 5.00
+
+  # ----- Moonshot Kimi -----
+  moonshot:
+    type: openai_compat
+    base_url: https://api.moonshot.cn/v1
+    keys:
+      - id: moonshot-1
+        key: sk-REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 8
+        enabled: true
+    models:
+      kimi-k2-0905-preview:
+        input_per_1m: 0.60
+        output_per_1m: 2.50
+      moonshot-v1-8k:
+        input_per_1m: 1.70
+        output_per_1m: 1.70
+
+  # ----- OpenRouter (multi-model aggregator) -----
+  openrouter:
+    type: openai_compat
+    base_url: https://openrouter.ai/api/v1
+    keys:
+      - id: openrouter-1
+        key: sk-or-REPLACE_ME
+        rpm: 200
+        tpm: 0
+        concurrency: 8
+        enabled: true
+    models:
+      # Add specific models you plan to call through OpenRouter, e.g.:
+      # anthropic/claude-sonnet-4: { input_per_1m: 3.00, output_per_1m: 15.00 }
+      # meta-llama/llama-3.1-405b-instruct: { input_per_1m: 1.79, output_per_1m: 1.79 }
+
+  # ----- Doubao (ByteDance / Volcano Engine) -----
+  doubao:
+    type: openai_compat
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    keys:
+      - id: doubao-1
+        key: REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 8
+        enabled: true
+    models:
+      # Volcano Engine uses endpoint IDs as model identifiers in some setups.
+      # Replace with your real endpoint id or model id (e.g. ep-2025xxxxx-yyyyy).
+      doubao-1.5-pro-32k:
+        input_per_1m: 0.80
+        output_per_1m: 2.00
+      doubao-1.5-thinking-pro:
+        input_per_1m: 4.00
+        output_per_1m: 16.00
+
+  # ----- Xiaomi MiMo -----
+  mimo:
+    type: openai_compat
+    # Update base_url to the actual endpoint provided by Xiaomi MiMo.
+    base_url: https://api.mimo.xiaomi.com/v1
+    keys:
+      - id: mimo-1
+        key: REPLACE_ME
+        rpm: 0
+        tpm: 0
+        concurrency: 4
+        enabled: true
+    models:
+      mimo-7b-rl:
+        input_per_1m: 0.00
+        output_per_1m: 0.00
+
+  # ----- SiliconFlow (multi-model aggregator, OpenAI-compatible) -----
+  # Hosts third-party open-source models (DeepSeek, Qwen, GLM, Llama, etc.)
+  # plus their own fine-tunes. Bearer auth, OpenAI-style /chat/completions.
+  # Supports top-level ``enable_thinking`` and ``thinking_budget`` on a
+  # subset of models — see openai_compat.py for the supported-model list.
+  # Reasoning-only variants (DeepSeek-R1, GLM-Z1, Kimi-K2-Thinking,
+  # Qwen3-*-Thinking) are intentionally EXCLUDED from this template.
+  siliconflow:
+    type: openai_compat
+    base_url: https://api.siliconflow.cn/v1
+    keys:
+      - id: siliconflow-1
+        key: sk-REPLACE_ME
+        rpm: 500
+        tpm: 2000000
+        concurrency: 8
+        enabled: true
+    models:
+      # Example entries; refine after listing /v1/models for your account.
+      deepseek-ai/DeepSeek-V4-Flash:
+        input_per_1m: 0.10
+        output_per_1m: 0.50
+      deepseek-ai/DeepSeek-V3.2:
+        input_per_1m: 0.27
+        output_per_1m: 1.10
+      Qwen/Qwen3-235B-A22B-Instruct-2507:
+        input_per_1m: 0.40
+        output_per_1m: 1.20
+      zai-org/GLM-4.6:
+        input_per_1m: 0.50
+        output_per_1m: 2.00
+      moonshotai/Kimi-K2-Instruct-0905:
+        input_per_1m: 0.60
+        output_per_1m: 2.50
+
+# =============================================================================
+# Model routing: short alias -> provider:model_id
+# This is what experiment scripts pass to `LLMClient.chat(model=...)`.
+# =============================================================================
+models:
+  # OpenAI (non-reasoning chat models only)
+  gpt-4o: openai:gpt-4o
+  gpt-4o-mini: openai:gpt-4o-mini
+  gpt-4.1: openai:gpt-4.1
+  gpt-4.1-mini: openai:gpt-4.1-mini
+  gpt-4.1-nano: openai:gpt-4.1-nano
+  gpt-5-chat: openai:gpt-5-chat-latest
+  gpt-5.1-chat: openai:gpt-5.1-chat-latest
+  gpt-5.2-chat: openai:gpt-5.2-chat-latest
+  gpt-5.3-chat: openai:gpt-5.3-chat-latest
+
+  # Anthropic
+  claude-sonnet-4: anthropic:claude-sonnet-4-20250514
+  claude-opus-4: anthropic:claude-opus-4-20250514
+  claude-haiku-3.5: anthropic:claude-3-5-haiku-20241022
+
+  # Google
+  gemini-2.5-pro: google:gemini-2.5-pro
+  gemini-2.5-flash: google:gemini-2.5-flash
+
+  # DeepSeek
+  deepseek-v3: deepseek:deepseek-chat
+  deepseek-r1: deepseek:deepseek-reasoner
+
+  # Qwen
+  qwen3-235b: qwen:qwen3-235b-a22b
+  qwen-max: qwen:qwen-max
+  qwen-plus: qwen:qwen-plus
+
+  # GLM
+  glm-4.5: glm:glm-4.5
+  glm-4-plus: glm:glm-4-plus
+
+  # Moonshot
+  kimi-k2: moonshot:kimi-k2-0905-preview
+
+  # Doubao
+  doubao-pro: doubao:doubao-1.5-pro-32k
+  doubao-thinking: doubao:doubao-1.5-thinking-pro
+
+  # MiMo
+  mimo-7b: mimo:mimo-7b-rl
+
+  # SiliconFlow (open-source aggregator; reasoning-only variants excluded)
+  sf-deepseek-v4-flash: siliconflow:deepseek-ai/DeepSeek-V4-Flash
+  sf-deepseek-v3.2: siliconflow:deepseek-ai/DeepSeek-V3.2
+  sf-qwen3-235b: siliconflow:Qwen/Qwen3-235B-A22B-Instruct-2507
+  sf-glm-4.6: siliconflow:zai-org/GLM-4.6
+  sf-kimi-k2-0905: siliconflow:moonshotai/Kimi-K2-Instruct-0905
+
+# =============================================================================
+# Global defaults (optional - all keys have sensible defaults)
+# =============================================================================
+defaults:
+  retry:
+    max_attempts: 5
+    initial_backoff: 1.0    # seconds
+    max_backoff: 60.0
+    backoff_multiplier: 2.0
+    jitter: 0.2             # 0..1, multiplicative random jitter
+  timeout: 120              # per-request timeout in seconds
+  trace_dir: llm_traces     # where call traces are written (gitignored)
